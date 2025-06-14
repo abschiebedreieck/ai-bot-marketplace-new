@@ -29,7 +29,7 @@ export default function CheckoutPage() {
         const data = await res.json();
         return data.id;
       },
-      onApprove: async (data, actions) => {
+      onApprove: async (data) => {
         alert("✅ Zahlung erfolgreich: " + data.orderID);
       },
       onError: (err) => {
