@@ -1,11 +1,13 @@
-export const runtime  = "nodejs";          // zwingt Node-Runtime
-export const dynamic  = "force-dynamic";   // verhindert Build-Analyse
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 import { NextResponse } from "next/server";
 import { createClient }  from "@supabase/supabase-js";
 
+// KEIN createClient HIER!
+
 export async function POST(req) {
-  // Supabase-Client wird erst hier erzeugt:
+  // createClient erst hier
   const supabase = createClient(
     process.env.SUPABASE_URL,
     process.env.SUPABASE_SERVICE_ROLE_KEY
