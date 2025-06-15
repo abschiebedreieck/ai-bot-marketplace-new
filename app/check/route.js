@@ -1,26 +1,26 @@
-export const runtime = "nodejs";
-export const dynamic = "force-dynamic";
+import { NextResponse } from 'next/server';
+import { createClient } from '@supabase/supabase-js';
 
-import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
 
 export async function POST(req) {
-  const supabase = createClient(
-    process.env.SUPABASE_URL,
-    process.env.SUPABASE_SERVICE_ROLE_KEY
-  );
-
   const { user_id, bot_id } = await req.json();
 
-  const { count, error } = await supabase
-    .from("purchases")
-    .select("id", { count: "exact", head: true })
-    .eq("user_id", user_id)
-    .eq("bot_id", bot_id);
+  const { data, error } = await supabase
+    .from('purchases')
+    .select('*')
+    .eq('user_id', user_id)
+    .eq('bot_id', bot_id)
+    .maybeSingle();
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error(error);
+    return NextResponse.json({ access: false, error: error.message }, { status: 500 });
   }
 
-  return NextResponse.json({ access: count > 0 });
+  if (data) {
+    return NextResponse.json({ access: true });
+  } else {
+    return NextResponse.json({ access: false });
+  }
 }
