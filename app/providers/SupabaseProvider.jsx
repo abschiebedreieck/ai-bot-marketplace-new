@@ -1,25 +1,19 @@
 'use client'
 
-import { useState, useContext, createContext } from 'react'
+import { createContext, useContext, useState } from 'react'
 import { createBrowserClient } from '@supabase/ssr'
 
-const SupabaseContext = createContext(null)
+const Context = createContext(null)
 
-export function SupabaseProvider({ children }) {
+export const SupabaseProvider = ({ children }) => {
   const [supabase] = useState(() =>
     createBrowserClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
     )
   )
-
-  return (
-    <SupabaseContext.Provider value={supabase}>
-      {children}
-    </SupabaseContext.Provider>
-  )
+  return <Context.Provider value={supabase}>{children}</Context.Provider>
 }
 
-export function useSupabase() {
-  return useContext(SupabaseContext)
-}
+export const useSupabase = () => useContext(Context)
+  

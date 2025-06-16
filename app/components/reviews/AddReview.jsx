@@ -1,45 +1,38 @@
 'use client'
 
-import { useState } from 'react'
-import { useSupabase } from '@/app/providers/SupabaseProvider'
+import { useState, useEffect } from 'react'
+import { useSupabase } from '../../../../providers/SupabaseProvider'
 
 export default function AddReview({ bot_id }) {
-  const supabase = useSupabase()
   const [rating, setRating] = useState(5)
   const [comment, setComment] = useState('')
-  const [message, setMessage] = useState('')
+  const [userId, setUserId] = useState(null)
+  const supabase = useSupabase()
 
-  const submit = async () => {
-    const { data: { user } } = await supabase.auth.getUser()
+  useEffect(() => {
+    async function fetchUser() {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) setUserId(user.id)
+    }
+    fetchUser()
+  }, [supabase])
 
+  async function submitReview() {
     const res = await fetch('/api/reviews/add', {
       method: 'POST',
-      body: JSON.stringify({
-        bot_id,
-        user_id: user.id,
-        rating,
-        comment,
-      }),
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ bot_id, user_id: userId, rating, comment }),
     })
-
-    if (res.status === 200) {
-      setMessage('Danke für deine Bewertung!')
-    } else {
-      const err = await res.json()
-      setMessage(err.error)
-    }
+    const data = await res.json()
+    alert(data.error || 'Bewertung gespeichert!')
   }
 
   return (
-    <div className="mt-8">
-      <h3 className="text-xl font-bold mb-4">Bewertung abgeben</h3>
-      <div className="mb-4">
-        <label>Sterne (1-5):</label>
-        <input type="number" value={rating} onChange={(e) => setRating(e.target.value)} min="1" max="5" className="ml-2 w-16" />
-      </div>
-      <textarea placeholder="Kommentar" value={comment} onChange={(e) => setComment(e.target.value)} className="w-full p-2 border rounded mb-4" />
-      <button onClick={submit} className="bg-blue-500 p-2 text-white rounded">Absenden</button>
-      {message && <div className="mt-4">{message}</div>}
+    <div className="mt-4">
+      <h3 className="font-semibold">Eigene Bewertung abgeben:</h3>
+      <input type="number" min={1} max={5} value={rating} onChange={(e) => setRating(e.target.value)} className="text-black" />
+      <textarea value={comment} onChange={(e) => setComment(e.target.value)} className="block w-full text-black" />
+      <button onClick={submitReview} className="bg-blue-500 p-2 mt-2">Absenden</button>
     </div>
   )
 }
