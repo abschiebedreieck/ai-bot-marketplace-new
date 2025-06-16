@@ -1,22 +1,22 @@
-'use client'
+"use client";
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from "react";
 
 export default function Reviews({ bot_id }) {
-  const [reviews, setReviews] = useState([])
+  const [reviews, setReviews] = useState([]);
 
   useEffect(() => {
     async function loadReviews() {
-      const res = await fetch('/api/reviews/get', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const res = await fetch("/api/reviews/get", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ bot_id }),
-      })
-      const data = await res.json()
-      setReviews(data)
+      });
+      const data = await res.json();
+      setReviews(data);
     }
-    loadReviews()
-  }, [bot_id])
+    loadReviews();
+  }, [bot_id]);
 
   return (
     <div>
@@ -29,5 +29,5 @@ export default function Reviews({ bot_id }) {
         </div>
       ))}
     </div>
-  )
+  );
 }

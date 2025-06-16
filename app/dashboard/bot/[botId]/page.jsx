@@ -1,33 +1,33 @@
-'use client'
+"use client";
 
-import { useEffect, useState } from 'react'
-import { useSupabase } from '../../../../providers/SupabaseProvider'
-import Reviews from '../../../../components/reviews/Reviews'
-import AddReview from '../../../../components/reviews/AddReview'
-import { useParams } from 'next/navigation'
+import { useEffect, useState } from "react";
+import { useSupabase } from "app/providers/SupabaseProvider";
+import Reviews from "app/components/reviews/Reviews";
+import AddReview from "app/components/reviews/AddReview";
+import { useParams } from "next/navigation";
 
 export default function BotDetail() {
-  const supabase = useSupabase()
-  const [bot, setBot] = useState(null)
-  const params = useParams()
-  const botId = params.botId
+  const supabase = useSupabase();
+  const [bot, setBot] = useState(null);
+  const params = useParams();
+  const botId = params.botId;
 
   useEffect(() => {
     const fetchBot = async () => {
-      const { data: { user } } = await supabase.auth.getUser()
+      const { data: { user } } = await supabase.auth.getUser();
       const { data, error } = await supabase
-        .from('bots')
-        .select('*')
-        .eq('id', botId)
-        .eq('owner_id', user.id)
-        .single()
+        .from("bots")
+        .select("*")
+        .eq("id", botId)
+        .eq("owner_id", user.id)
+        .single();
 
-      if (!error) setBot(data)
-    }
-    fetchBot()
-  }, [botId, supabase])
+      if (!error) setBot(data);
+    };
+    fetchBot();
+  }, [botId, supabase]);
 
-  if (!bot) return <div>Loading...</div>
+  if (!bot) return <div>Loading...</div>;
 
   return (
     <div className="p-8 text-white">
@@ -41,5 +41,5 @@ export default function BotDetail() {
         <AddReview bot_id={bot.id} />
       </div>
     </div>
-  )
+  );
 }
